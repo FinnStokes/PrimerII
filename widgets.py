@@ -67,6 +67,24 @@ class BasicWidget(Widget):
         if button == 1:
             self.image = self.hoverImage
 
+class TextWidget(BasicWidget):
+    def __init__(self,rect,baseColour,hoverColour,pressedColour,textColour,incText):
+        BasicWidget.__init__(self,rect,baseColour,hoverColour,pressedColour)
+
+        self.textColour= textColour
+        self.incText = incText
+
+        self.font = pygame.font.SysFont(None, 25)
+        self.textImage = font.render(self.incText,True,textColour)
+
+        self.baseImage.blit(self.textImage)
+        self.hoverImage.blit(self.textImage)
+        self.pressedImage.blit(self.textImage)
+
+        self.image=self.baseImage
+        self.rect = rect
+
+
 def update(sprites, active, pos):
     current = pygame.sprite.Group()
     for s in reversed(sprites.sprites()):
@@ -81,3 +99,4 @@ def update(sprites, active, pos):
         if not s in current:
             active.remove(s)
             s.out()
+

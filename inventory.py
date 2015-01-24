@@ -35,7 +35,7 @@ class Inventory:
 	def __init__(self, timeline, sprites):
 		#timelines must start at 0
 		self.layer = layers.HUD
-		self.allcentres[[0 for i in range(2)] for i in range(INV_ITEMS)]
+		self.allcentres[[0 for i in range(2)] for j in range(INV_ITEMS)]
 		self.timeline = timeline
 
 		widthchunk = INVBOX_WIDTH/(INV_ITEMS+1)
