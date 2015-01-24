@@ -8,10 +8,12 @@ import os
 import pygame
 from pygame.locals import *
 
+import actions
 import cameras
+import inventory
 import layers
 import maps
-import inventory
+import timelines
 import widgets
 
 def main():
@@ -42,6 +44,41 @@ def main():
 
     #sprites.add(btn1, btn2)
     #sprites.add(btn3, layer=layers.MAP)
+
+    tm = timelines.TimelineManager()
+
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 3))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 1))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 2))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.seek(4)
+    tm.insert(2)
+    tm.seek(2)
+    tm.insert(1)
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 1))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 2))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 3))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 2))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
+    tm.active_timeline().actions.append(actions.Action("test", 2))
+    tm.advance()
+    print(tm.active_player, tm.current_time)
 
     with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites)        
