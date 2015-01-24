@@ -1,0 +1,107 @@
+---
+rooms:
+    - name: CorridorNW
+      position: [6,2]
+      centre: [13,12]
+      inactive: corridorNW.png
+      active: corridorNW.png
+      actions:
+        - name: Look through window
+          type: activate
+          cost: 1
+        - name: Check door outside
+          type: inspect
+          cost: 1
+      links:
+        - room: sBubbleNW
+          cost: 3
+
+    - name: sBubbleNW
+      position: [6,24]
+      centre: [13,31]
+      inactive: sbubbleNW.png
+      active: sbubbleNW.png
+      links:
+        - room: CorridorNW
+          cost: 3
+        - room: lBubble
+          cost: 3
+        - room: RoomNW
+          cost: 2
+
+    - name: RoomNW
+      position: [20,23]
+      centre: [29,24]
+      inactive: roomNW.png
+      active: roomNW.png
+      actions:
+        - name: Read office document
+          type: read
+          cost: 3
+      links:
+        - room: CorridorNW
+          cost: 2
+
+    - name: lBubble
+      position: [0,38]
+      centre: [13,15]
+      inactive: lbubble.png
+      active: lbubble.png
+      actions:
+        - name: Examine terrarium
+          type: inspect
+          cost: 1
+        - name: Adjust terrarium parameters
+          type: activate
+          cost: 2
+      links:
+        - name: sBubbleNW
+          cost: 3
+          name: CorridorCW
+          cost: 4
+          name: RoomSW
+          cost: 3
+
+    - name: RoomSW
+      position: [2,64]
+      centre: [14,76]
+      inactive: roomSW.png
+      active: roomSW.png
+      actions:
+        - name: Log in to network
+          type: activate
+          cost: 1
+        - name: Read company webpage
+          type: read
+          cost: 1
+      links:
+        - name: lBubble
+          cost: 3
+        - name: sBubbleS
+          cost: 3
+
+    - name: CorridorCW
+      position: [26,46]
+      centre: [32,62]
+      inactive: corridorCW.png
+      active: corridorCW.png
+      actions:
+        - name: Examine painting of glorious leader
+          type: inspect
+          cost: 1
+      links:
+        - name: lBubble
+          cost: 4
+        - name: sBubbleS
+          cost: 3
+
+    - name: sBubbleS
+      position: [26,76]
+      centre: [32,82]
+      inactive: sbubbleS.png
+      active: sbubbleS.png
+      links:
+        - name: RoomSW
+          cost: 3
+        - name: CorridorCW
+          cost: 3
