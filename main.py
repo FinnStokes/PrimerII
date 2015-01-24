@@ -11,6 +11,7 @@ from pygame.locals import *
 import cameras
 import layers
 import maps
+import inventory
 import widgets
 
 def main():
