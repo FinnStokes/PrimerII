@@ -1,0 +1,19 @@
+---
+rooms:
+    - name: Hangar
+      position: [0,0]
+      centre: [200, 50]
+      inactive: button.png
+      active: button.png
+      actions:
+          - name: Read shipping manifests
+            type: read
+            cost: 2
+          - name: Lift boxes using crane
+            type: activate
+            cost: 2
+          - name: Open bay doors
+            type: activate
+            cost: 1
+      links: []
+...

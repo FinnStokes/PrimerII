@@ -3,7 +3,6 @@ import pygame
 class Widget(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.layer = 0
         self.blocking = True
 
     def over(self):
@@ -21,9 +20,19 @@ class Widget(pygame.sprite.Sprite):
     def contains(self, pos):
         return self.rect.collidepoint(pos)
 
-    def update(self):
+    def update(self, camera):
         pass
 
+class WorldWidget(Widget):
+    def __init__(self, pos):
+        Widget.__init__(self)
+        self.blocking = False
+        self.position = pos
+
+    def update(self, camera):
+        self.rect.top = camera.screen.top + self.position[1] - camera.world.top
+        self.rect.left = camera.screen.left + self.position[0] - camera.world.left
+    
 class BasicWidget(Widget):
     def __init__(self, rect, baseColour, hoverColour, pressedColour):
         Widget.__init__(self)

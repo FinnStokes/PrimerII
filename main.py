@@ -8,6 +8,9 @@ import os
 import pygame
 from pygame.locals import *
 
+import cameras
+import layers
+import maps
 import widgets
 
 def main():
@@ -30,10 +33,17 @@ def main():
     active = pygame.sprite.Group()
     pressed = pygame.sprite.Group()
 
-    btn1 = widgets.BasicWidget(pygame.rect.Rect(300,300,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
-    btn2 = widgets.BasicWidget(pygame.rect.Rect(400,400,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
+    camera = cameras.Camera((0,0,1000,800),(0,0,1000,800))
+    
+    #btn1 = widgets.BasicWidget(pygame.rect.Rect(300,300,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
+    #btn2 = widgets.BasicWidget(pygame.rect.Rect(400,400,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
+    #btn3 = widgets.BasicWidget(pygame.rect.Rect(100,100,1500,1000), (100, 100, 100), (200, 200, 200), (50, 50, 50))
 
-    sprites.add(btn1, btn2)
+    #sprites.add(btn1, btn2)
+    #sprites.add(btn3, layer=layers.MAP)
+
+    with open("test.yml") as f:
+        m = maps.Map(f, sprites)        
     
     done = False
     
@@ -57,7 +67,7 @@ def main():
 
         # Blit everything to the screen
         screen.blit(background, (0, 0))
-        sprites.update()
+        sprites.update(camera)
         sprites.draw(screen)
         pygame.display.flip()
 
