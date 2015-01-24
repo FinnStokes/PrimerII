@@ -35,7 +35,7 @@ class Inventory:
 	def __init__(self, timeline, sprites):
 		#timelines must start at 0
 		self.layer = layers.HUD
-		self.allcentres[[0 for i in range(2)] for j in range(INV_ITEMS)]
+		self.allcentres = [[0 for i in range(INV_ITEMS)] for j in range(2)]
 		self.timeline = timeline
 
 		widthchunk = INVBOX_WIDTH/(INV_ITEMS+1)
@@ -51,7 +51,7 @@ class Inventory:
 
 	def addItem(self, newItem,sprites):
 		for ii in range(INV_ITEMS):
-			if self.invList[ii].name = 'blank':
+			if self.invList[ii].name == 'blank':
 				newItem.centre = self.allcentres[ii]
 				self.invList[ii] = newItem(BLANK,sprites)
 				return true
@@ -59,7 +59,7 @@ class Inventory:
 
 	def popItem(self,itemName,newCentre,sprites):
 		for ii in range(INV_ITEMS):
-			if self.invList[ii].name = itemName:
+			if self.invList[ii].name == itemName:
 				self.invList[ii].centre = newCentre
 				for jj in range(ii,INV_ITEMS-1):
 					self.invList[jj]=self.invList[jj+1]
@@ -71,7 +71,7 @@ class Inventory:
 
 	def clearItem(self,itemName,sprites):
 		for ii in range(INV_ITEMS):
-			if self.invList[ii].name = itemName:
+			if self.invList[ii].name == itemName:
 				for jj in range(ii,INV_ITEMS-1):
 					self.invList[jj]=self.invList[jj+1]
 					self.invList[jj].centre=self.allcentres[jj]
