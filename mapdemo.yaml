@@ -1,4 +1,5 @@
 ---
+directory: mapdemo
 rooms:
     - name: CorridorNW
       position: [6,2]
@@ -45,8 +46,8 @@ rooms:
     - name: lBubble
       position: [0,38]
       centre: [13,15]
-      inactive: lbubble.png
-      active: lbubble.png
+      inactive: lbubbleW.png
+      active: lbubbleW.png
       actions:
         - name: Examine terrarium
           type: inspect
@@ -55,11 +56,11 @@ rooms:
           type: activate
           cost: 2
       links:
-        - name: sBubbleNW
+        - room: sBubbleNW
           cost: 3
-          name: CorridorCW
+        - room: CorridorCW
           cost: 4
-          name: RoomSW
+        - room: RoomSW
           cost: 3
 
     - name: RoomSW
@@ -75,9 +76,9 @@ rooms:
           type: read
           cost: 1
       links:
-        - name: lBubble
+        - room: lBubble
           cost: 3
-        - name: sBubbleS
+        - room: sBubbleS
           cost: 3
 
     - name: CorridorCW
@@ -90,9 +91,9 @@ rooms:
           type: inspect
           cost: 1
       links:
-        - name: lBubble
+        - room: lBubble
           cost: 4
-        - name: sBubbleS
+        - room: sBubbleS
           cost: 3
 
     - name: sBubbleS
@@ -101,7 +102,7 @@ rooms:
       inactive: sbubbleS.png
       active: sbubbleS.png
       links:
-        - name: RoomSW
+        - room: RoomSW
           cost: 3
-        - name: CorridorCW
+        - room: CorridorCW
           cost: 3

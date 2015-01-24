@@ -1,3 +1,5 @@
+import os
+
 import pygame
 import yaml
 
@@ -13,25 +15,31 @@ class Map:
         self.menu = menus.Popup(sprites)
         self.room_map = {}
         for room in data['rooms']:
-            r = Room(room, self.menu)
+            r = Room(room, self.menu, data['directory'])
             sprites.add(r)
             self.room_map[room['name']] = r
 
 class Room(widgets.WorldWidget):
-    def __init__(self, data, menu):
+    def __init__(self, data, menu, directory):
         widgets.WorldWidget.__init__(self, data['position'])
         self.level = layers.MAP
         self.name = data['name']
         self.centre = data['centre']
-        self.base_image, self.rect = resources.load_png(data['inactive'])
-        self.active_image, _ = resources.load_png(data['active'])
-        self.image = self.base_image
+        self.base_image, self.rect = resources.load_png(os.path.join(directory, data['inactive']))
+        self.active_image, _ = resources.load_png(os.path.join(directory, data['active']))
+        self.unscaled_image = self.base_image
+        self.image = self.unscaled_image
+        self.mask = pygame.mask.from_surface(self.unscaled_image)
         self.actions = []
-        for action in data['actions']:
-            self.actions.append(construct_action(action))
+        self.width = self.unscaled_image.get_width()
+        self.height = self.unscaled_image.get_height()
+        if 'actions' in data:
+            for action in data['actions']:
+                self.actions.append(construct_action(action))
         self.links = []
-        for link in data['links']:
-            self.links.append(Link(link))
+        if 'links' in data:
+            for link in data['links']:
+                self.links.append(Link(link))
         self.menu = menu
 
     def over(self):
@@ -43,6 +51,11 @@ class Room(widgets.WorldWidget):
     def pressed(self, pos, button):
         if button == 1:
             self.menu.show(pos, self.actions)
+
+    def update(self, camera):
+        widgets.WorldWidget.update(self, camera)
+        if self.mask.get_size() != self.image.get_size():
+            self.mask = pygame.mask.from_surface(self.image)
         
 class Link:
     def __init__(self, data):

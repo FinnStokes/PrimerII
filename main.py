@@ -33,7 +33,7 @@ def main():
     active = pygame.sprite.Group()
     pressed = pygame.sprite.Group()
 
-    camera = cameras.Camera((0,0,1000,800),(0,0,1000,800))
+    camera = cameras.Camera((0,0,1000,800),(0,0,100,80))
     
     #btn1 = widgets.BasicWidget(pygame.rect.Rect(300,300,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
     #btn2 = widgets.BasicWidget(pygame.rect.Rect(400,400,900,500), (255, 0, 0), (0, 255, 0), (0, 0, 255))
@@ -42,7 +42,7 @@ def main():
     #sprites.add(btn1, btn2)
     #sprites.add(btn3, layer=layers.MAP)
 
-    with open("test.yml") as f:
+    with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites)        
     
     done = False

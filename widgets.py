@@ -30,8 +30,12 @@ class WorldWidget(Widget):
         self.position = pos
 
     def update(self, camera):
-        self.rect.top = camera.screen.top + self.position[1] - camera.world.top
-        self.rect.left = camera.screen.left + self.position[0] - camera.world.left
+        self.rect.top = camera.screen.top + (self.position[1] - camera.world.top) * camera.screen.width / camera.world.width
+        self.rect.left = camera.screen.left + (self.position[0] - camera.world.left) * camera.screen.height / camera.world.height
+        self.rect.width = self.width * camera.screen.width / camera.world.width
+        self.rect.height = self.height * camera.screen.height / camera.world.height
+        if self.rect.width != self.image.get_width() or self.rect.height != self.image.get_height():
+            self.image = pygame.transform.scale(self.unscaled_image, self.rect.size)
     
 class BasicWidget(Widget):
     def __init__(self, rect, baseColour, hoverColour, pressedColour):

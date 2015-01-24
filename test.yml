@@ -15,5 +15,19 @@ rooms:
           - name: Open bay doors
             type: activate
             cost: 1
-      links: []
+      links:
+          - room: Corridor A
+            cost: 2
+    - name: Corridor A
+      position: [400,50]
+      centre: [600, 100]
+      inactive: button.png
+      active: button.png
+      actions:
+          - name: Read bulletin board
+            type: read
+            cost: 1
+      links:
+          - room: Hangar
+            cost: 2
 ...
