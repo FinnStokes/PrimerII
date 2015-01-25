@@ -3,7 +3,7 @@ import pygame
 import layers
 import widgets
 
-ITEM_WIDTH = 350
+ITEM_WIDTH = 400
 ITEM_HEIGHT = 35
 
 class Popup:
@@ -41,7 +41,7 @@ class Canceller(widgets.Widget):
         
 class Item(widgets.TextWidget):
     def __init__(self, action, pos, tm, parent):
-        widgets.TextWidget.__init__(self, pygame.Rect(pos, (ITEM_WIDTH, ITEM_HEIGHT)), (100, 100, 100), (50, 50, 50), (200, 200, 200), (255,255,255), action.name)
+        widgets.TextWidget.__init__(self, pygame.Rect(pos, (ITEM_WIDTH, ITEM_HEIGHT)), (100, 100, 100), (50, 50, 50), (200, 200, 200), (255,255,255), action.name +" ("+str(action.cost)+")")
         self.action = action
         self.tm = tm
         self.parent = parent
