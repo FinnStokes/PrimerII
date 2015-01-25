@@ -40,7 +40,7 @@ rooms:
           type: read
           cost: 3
       links:
-        - room: CorridorNW
+        - room: sBubbleNW
           cost: 2
 
     - name: lBubble
