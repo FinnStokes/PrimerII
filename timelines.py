@@ -44,8 +44,7 @@ class Timeline:
             self.ticks -= 1
             current_time += 1
         #print(self.player, "playback done", self.ticks, current_time)
-        if self.ticks == 0:
-            self.ticks = current_time - time
+        self.ticks += current_time - time
 
     def advance(self):
         if not self.active:
@@ -103,7 +102,7 @@ class ActionWidget(widgets.Widget):
         self.rect = self.image.get_rect()
         self.rect.top = PANE_TOP + SPACING + (SPACING + self.image.get_height()) * timeline
         self.rect.left = CURRENT_TIME_X
-        self.layer = layers.HUD
+        self._layer = layers.HUD
                 
 class TimelineManager:
     def __init__(self, sprites):

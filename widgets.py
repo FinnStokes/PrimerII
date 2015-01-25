@@ -75,11 +75,11 @@ class TextWidget(BasicWidget):
         self.incText = incText
 
         self.font = pygame.font.SysFont(None, 25)
-        self.textImage = font.render(self.incText,True,textColour)
+        self.textImage = self.font.render(self.incText,True,textColour)
 
-        self.baseImage.blit(self.textImage)
-        self.hoverImage.blit(self.textImage)
-        self.pressedImage.blit(self.textImage)
+        self.baseImage.blit(self.textImage, (10,10))
+        self.hoverImage.blit(self.textImage, (10,10))
+        self.pressedImage.blit(self.textImage, (10,10))
 
         self.image=self.baseImage
         self.rect = rect

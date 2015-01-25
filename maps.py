@@ -10,9 +10,9 @@ import resources
 import widgets
 
 class Map:
-    def __init__(self, map_file, sprites, tm):
+    def __init__(self, map_file, sprites, tm, screen):
         data = yaml.safe_load(map_file)
-        self.menu = menus.Popup(sprites, tm)
+        self.menu = menus.Popup(sprites, tm, screen)
         self.room_map = {}
         for room in data['rooms']:
             r = Room(room, self.menu, data['directory'])
@@ -22,7 +22,7 @@ class Map:
 class Room(widgets.WorldWidget):
     def __init__(self, data, menu, directory):
         widgets.WorldWidget.__init__(self, data['position'])
-        self.level = layers.MAP
+        self._layer = layers.MAP
         self.name = data['name']
         self.centre = data['centre']
         self.base_image, self.rect = resources.load_png(os.path.join(directory, data['inactive']))

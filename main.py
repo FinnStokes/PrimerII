@@ -48,13 +48,15 @@ def main():
     tm = timelines.TimelineManager(sprites)
 
     with open("mapdemo.yaml") as f:
-        m = maps.Map(f, sprites, tm)        
+        m = maps.Map(f, sprites, tm, screenRect)
     
     done = False
 
     next_tl = 1
     
     while not done:
+        widgets.update(sprites, active, pygame.mouse.get_pos())
+        
         for event in pygame.event.get():
             if event.type == QUIT:
                 done = True
@@ -111,8 +113,6 @@ def main():
                     tm.insert(next_tl)
                     tm.advance()
                     next_tl += 1
-            elif event.type == MOUSEMOTION:
-                widgets.update(sprites, active, event.pos)
             elif event.type == MOUSEBUTTONDOWN:
                 for s in active:
                     if s.pressed:

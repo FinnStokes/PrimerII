@@ -29,13 +29,13 @@ class Item(widgets.Widget):
         self.centre = data['centre']
         self.image, self.rect = resources.load_png(os.path.join('items', data['onMap']))
         self.mask = pygame.mask.from_surface(self.image)
-        self.layer = layers.OBJECTS
+        self._layer = layers.OBJECTS
         sprites.add(self)
 
 class Inventory:
 	def __init__(self, timeline, sprites):
 		#timelines must start at 0
-		self.layer = layers.HUD
+		self._layer = layers.HUD
 		self.timeline = timeline
                 self.sprites = sprites
 
