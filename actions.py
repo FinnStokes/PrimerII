@@ -3,8 +3,8 @@ class Action:
         self.name = name
         self.cost = cost
 
-    def isvalid(self):
+    def isvalid(self, player):
         return True
 
-    def perform(self):
+    def perform(self, player):
         pass

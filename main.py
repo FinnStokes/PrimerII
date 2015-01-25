@@ -81,7 +81,7 @@ def main():
     print(tm.active_player, tm.current_time)
 
     with open("mapdemo.yaml") as f:
-        m = maps.Map(f, sprites)        
+        m = maps.Map(f, sprites, tm)        
     
     done = False
     

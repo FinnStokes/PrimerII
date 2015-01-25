@@ -10,9 +10,9 @@ import resources
 import widgets
 
 class Map:
-    def __init__(self, map_file, sprites):
+    def __init__(self, map_file, sprites, tm):
         data = yaml.safe_load(map_file)
-        self.menu = menus.Popup(sprites)
+        self.menu = menus.Popup(sprites, tm)
         self.room_map = {}
         for room in data['rooms']:
             r = Room(room, self.menu, data['directory'])

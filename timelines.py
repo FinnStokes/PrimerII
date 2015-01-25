@@ -1,7 +1,7 @@
 import inventory
 
 class Timeline:
-    def __init__(self, actions=[], planned=None, start_time=0):
+    def __init__(self, player, actions=[], planned=None, start_time=0):
         self.actions = actions[:]
         if planned:
             self.planned = planned[:]
@@ -9,6 +9,7 @@ class Timeline:
         self.ticks = 0
         self.start_time = start_time
         self.active = True
+        self.player = player
 
     def seek(self, time):
         self.current_action = -1
@@ -20,8 +21,8 @@ class Timeline:
                 self.current_action += 1
                 if self.current_action < len(self.actions):
                     action = self.actions[self.current_action]
-                    if action.isvalid():
-                        action.perform()
+                    if action.isvalid(self.player):
+                        action.perform(self.player)
                     else:
                         print("Error in action playback")
                     self.ticks = action.cost
@@ -40,9 +41,9 @@ class Timeline:
             if self.current_action + 1 < len(self.actions):
                 self.current_action += 1
                 action = self.actions[self.current_action]
-                if action.isvalid():
+                if action.isvalid(self.player):
                     self.ticks = action.cost
-                    action.perform()
+                    action.perform(self.player)
                 else:
                     self.planned = self.actions
                     self.actions = self.actions[:self.current_action]
@@ -51,10 +52,13 @@ class Timeline:
                 return False
         self.ticks -= 1
         return True
+
+    def do(self, action):
+        self.actions.append(action)
                 
 class TimelineManager:
     def __init__(self, sprites):
-        self.timelines = [Timeline(), None, None, None, None]
+        self.timelines = [Timeline(0), None, None, None, None]
         self.inventories = [inventory.Inventory(i, sprites) for i in range(5)]
         self.active_player = 0
         self.current_time = 0
@@ -84,6 +88,9 @@ class TimelineManager:
 
     def insert(self, player_no):
         if self.timelines[player_no]:
-            self.timelines[player_no] = Timeline(planned=self.timelines[player_no].actions, start_time=self.current_time)
+            self.timelines[player_no] = Timeline(player_no, planned=self.timelines[player_no].actions, start_time=self.current_time)
         else:
-            self.timelines[player_no] = Timeline(start_time=self.current_time)
+            self.timelines[player_no] = Timeline(player_no, start_time=self.current_time)
+
+    def do(self, action):
+        self.active_timeline().do(action)
