@@ -1,3 +1,5 @@
+import inventory
+
 class Timeline:
     def __init__(self, actions=[], planned=None, start_time=0):
         self.actions = actions[:]
@@ -51,13 +53,17 @@ class Timeline:
         return True
                 
 class TimelineManager:
-    def __init__(self):
+    def __init__(self, sprites):
         self.timelines = [Timeline(), None, None, None, None]
+        self.inventories = [inventory.Inventory(i, sprites) for i in range(5)]
         self.active_player = 0
         self.current_time = 0
 
     def active_timeline(self):
         return self.timelines[self.active_player]
+
+    def active_inventory(self):
+        return self.inventories[self.active_player]
 
     def seek(self, time):
         self.active_player = 0

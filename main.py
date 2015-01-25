@@ -45,7 +45,7 @@ def main():
     #sprites.add(btn1, btn2)
     #sprites.add(btn3, layer=layers.MAP)
 
-    tm = timelines.TimelineManager()
+    tm = timelines.TimelineManager(sprites)
 
     tm.advance()
     print(tm.active_player, tm.current_time)
