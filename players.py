@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 
 import widgets
 
@@ -20,19 +21,26 @@ class Player(widgets.Widget):
         self.sprites = sprites
         self.timeline = timeline
         self.inventory = inventory
-        self.image = pygame.Surface([WIDTH, HEIGHT])
-        self.image.fill(colour)
+        self.bright = pygame.Surface([WIDTH, HEIGHT])
+        self.bright.fill(colour)
+        self.dull = self.bright.copy()
+        self.dull.fill((127,127,127), special_flags=BLEND_RGB_MULT)
+        self.image = self.bright
         self.rect = self.image.get_rect()
         self.active = False
         self.room = room
         self.blocking = False
 
-    def refresh(self):
+    def refresh(self, activePlayer):
         if self.timeline and self.timeline.isactive():
             if not self.active:
                 self.sprites.add(self)
                 self.active = True
             self.rect.topleft = ((self.room.centre[0]+OFFSET[self.id][0])*10, (self.room.centre[1]+OFFSET[self.id][1])*10)
+            if self.id == activePlayer:
+                self.image = self.bright
+            else:
+                self.image = self.dull
         elif self.active:
             self.sprites.remove(self)
             self.active = False

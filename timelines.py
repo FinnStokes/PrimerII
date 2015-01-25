@@ -147,7 +147,7 @@ class TimelineManager:
             if t:
                 t.seek(time)
         for player in self.players:
-            player.refresh()
+            player.refresh(self.active_player)
         
     def advance(self):
         while True:
@@ -161,7 +161,7 @@ class TimelineManager:
                 for sprite in self.sprites:
                     sprite.rect.left -= self.images[0].get_width()
         for player in self.players:
-            player.refresh()
+            player.refresh(self.active_player)
 
     def insert(self, player_no):
         if self.timelines[player_no]:
@@ -169,7 +169,7 @@ class TimelineManager:
         else:
             self.timelines[player_no] = Timeline(player_no, self, start_time=self.current_time)
         self.players[player_no].timeline = self.timelines[player_no]
-        self.players[player_no].refresh()
+        self.players[player_no].refresh(self.active_player)
 
     def do(self, action):
         self.active_timeline().do(action)

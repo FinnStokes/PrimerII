@@ -106,6 +106,8 @@ rooms:
       links:
         - room: RoomSW
           cost: 3
+        - room: RoomS
+          cost: 3
         - room: CorridorCW
           cost: 3
 
@@ -144,7 +146,7 @@ rooms:
           cost: 4
 
     - name: ClearC
-      position: [38.56]
+      position: [38,56]
       centre: [49,61]
       inactive: clearC.png
       active: clearC.png
