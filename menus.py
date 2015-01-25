@@ -34,6 +34,6 @@ class Item(widgets.BasicWidget):
 
     def pressed(self, pos, button):
         widgets.BasicWidget.pressed(self, pos, button)
-        if button == 0 and action.isvalid(self.tm.active_player):
+        if button == 1 and self.action.isvalid(self.tm.active_player):
             self.tm.do(self.action)
             self.tm.advance()

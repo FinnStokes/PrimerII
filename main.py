@@ -47,43 +47,12 @@ def main():
 
     tm = timelines.TimelineManager(sprites)
 
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 3))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 1))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 2))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.seek(4)
-    tm.insert(2)
-    tm.seek(2)
-    tm.insert(1)
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 1))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 2))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 3))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 2))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-    tm.active_timeline().actions.append(actions.Action("test", 2))
-    tm.advance()
-    print(tm.active_player, tm.current_time)
-
     with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites, tm)        
     
     done = False
+
+    next_tl = 1
     
     while not done:
         for event in pygame.event.get():
@@ -92,6 +61,56 @@ def main():
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     done = True
+                elif event.key == K_KP0:
+                    tm.seek(0)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP1:
+                    tm.seek(1)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP2:
+                    tm.seek(2)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP3:
+                    tm.seek(3)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP4:
+                    tm.seek(4)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP5:
+                    tm.seek(5)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP6:
+                    tm.seek(6)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP7:
+                    tm.seek(7)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP8:
+                    tm.seek(8)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
+                elif event.key == K_KP9:
+                    tm.seek(9)
+                    tm.insert(next_tl)
+                    tm.advance()
+                    next_tl += 1
             elif event.type == MOUSEMOTION:
                 widgets.update(sprites, active, event.pos)
             elif event.type == MOUSEBUTTONDOWN:
