@@ -95,6 +95,8 @@ rooms:
           cost: 4
         - room: sBubbleS
           cost: 3
+        - room: ClearC
+          cost: 2
 
     - name: sBubbleS
       position: [26,76]
@@ -119,3 +121,95 @@ rooms:
         - name: Read abandoned birthday card
           type: read
           cost: 1
+      links:
+        - room: RoomC
+          cost: 4
+        - room: sBubbleNE
+          cost: 3
+
+    - name: RoomC
+      position: [38,35]
+      centre: [49,45]
+      inactive: roomC.png
+      active: roomC.png
+      actions:
+        - name: Gaze upon server farm
+          type: inspect
+          cost: 2
+        - name: Pull the plug on the server farm
+          type: activate
+          cost: 5
+      links:
+        - room: RoomN
+          cost: 4
+
+    - name: ClearC
+      position: [38.56]
+      centre: [49,61]
+      inactive: clearC.png
+      active: clearC.png
+      actions:
+        - name: Wow are these mirrors on the other side?
+          type: inspect
+          cost: 1
+        - name: Look through north mirror
+          type: inspect
+          cost: 1
+        - name: Look through south mirror
+          type: inspect
+          cost: 1
+      links:
+        - room: CorridorCW
+          cost: 2
+
+    - name: RoomS
+      position: [38,66]
+      centre: [49,77]
+      inactive: roomS.png
+      active: roomS.png
+      actions:
+        - name: Flip a table
+          type: activate
+          cost: 3
+        - name: Search for abandoned snacks
+          type: activate
+          cost: 2
+      links:
+        - room: sBubbleS
+          cost: 3
+        - room: StorageSA
+          cost: 2
+        - room: StorageSB
+          cost: 2
+
+    - name: StorageSA
+      position: [60,66]
+      centre: [66,71]
+      inactive: storageSA.png
+      active: storageSA.png
+      actions:
+        - name: Look at all those cans!
+          type: inspect
+          cost: 1
+        - name: Grab a can of peas
+          type: activate
+          cost: 1
+      links:
+        - room: RoomS
+          cost: 2
+
+    - name: StorageSB
+      position: [60,76]
+      centre: [66,80]
+      inactive: storageSB.png
+      active: storageSB.png
+      actions:
+        - name: Look at all those boxes!
+          type: inspect
+          cost: 1
+        - name: Grab a box of cereal
+          type: activate
+          cost: 1
+      links:
+        - room: RoomS
+          cost: 2
