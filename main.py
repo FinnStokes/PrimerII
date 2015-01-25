@@ -49,10 +49,16 @@ def main():
 
     with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites, tm, screenRect)
-    
+
+    for i in range(len(tm.initial_room)):
+        tm.initial_room[i] = m.room_map['CorridorNW']
+        tm.players[i].room = tm.initial_room[i]
+        
     done = False
 
     next_tl = 1
+
+    tm.advance()
     
     while not done:
         widgets.update(sprites, active, pygame.mouse.get_pos())

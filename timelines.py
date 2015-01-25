@@ -1,11 +1,15 @@
 import os
 
 import pygame
+from pygame.locals import *
 
 import inventory
 import layers
+import players
 import resources
 import widgets
+
+COLOURS = ((255,0,0), (0,255,0), (0,0,255), (255, 255, 0), (255, 0, 255))
 
 class Timeline:
     def __init__(self, player, tm, actions=[], planned=None, start_time=0):
@@ -19,13 +23,14 @@ class Timeline:
         self.player = player
         self.tm = tm
         self.sprites = pygame.sprite.Group()
+        self.current_time = start_time
 
     def seek(self, time):
         self.current_action = -1
         self.ticks = 0
-        current_time = self.start_time
+        self.current_time = self.start_time
         self.active = True
-        while current_time < time:
+        while self.current_time < time:
             if self.ticks <= 0:
                 self.current_action += 1
                 if self.current_action < len(self.actions):
@@ -42,13 +47,14 @@ class Timeline:
             #else:
                 #print(self.player, "playback continuing action")
             self.ticks -= 1
-            current_time += 1
-        #print(self.player, "playback done", self.ticks, current_time)
-        self.ticks += current_time - time
+            self.current_time += 1
+        #print(self.player, "playback done", self.ticks, self.current_time)
+        self.ticks += self.current_time - time
 
     def advance(self):
         if not self.active:
             #print(self.player, "inactive")
+            self.current_time += 1
             return True
         if self.current_action >= len(self.actions):
             #print(self.player, "out of actions")
@@ -81,6 +87,7 @@ class Timeline:
         #else:
             #print(self.player, "continuing action")
         self.ticks -= 1
+        self.current_time += 1
         return True
 
     def do(self, action):
@@ -90,6 +97,9 @@ class Timeline:
         self.tm.sprites.add(aw)
         self.tm.allsprites.add(aw)
 
+    def isactive(self):
+        return self.active and self.current_time >= self.start_time
+
 PANE_TOP = 880
 SPACING = 15
 CURRENT_TIME_X = 1920/2
@@ -98,7 +108,8 @@ class ActionWidget(widgets.Widget):
     def __init__(self, action, timeline, tm):
         widgets.Widget.__init__(self)
         self.action = action
-        self.image = tm.images[action.cost-1]
+        self.image = tm.images[action.cost-1].copy()
+        self.image.fill(COLOURS[timeline], special_flags=BLEND_RGB_MULT)
         self.rect = self.image.get_rect()
         self.rect.top = PANE_TOP + SPACING + (SPACING + self.image.get_height()) * timeline
         self.rect.left = CURRENT_TIME_X
@@ -108,6 +119,8 @@ class TimelineManager:
     def __init__(self, sprites):
         self.timelines = [Timeline(0, self), None, None, None, None]
         self.inventories = [inventory.Inventory(i, sprites) for i in range(5)]
+        self.initial_room = [None] * 5
+        self.players = [players.Player(i, COLOURS[i], sprites, self.timelines[i], self.inventories[i], self.initial_room[i]) for i in range(5)]
         self.active_player = 0
         self.current_time = 0
         self.sprites = pygame.sprite.Group()
@@ -120,32 +133,43 @@ class TimelineManager:
     def active_inventory(self):
         return self.inventories[self.active_player]
 
+    def active_avatar(self):
+        return self.players[self.active_player]
+    
     def seek(self, time):
         self.active_player = 0
         for sprite in self.sprites:
             sprite.rect.left -= self.images[0].get_width() * (time - self.current_time)
         self.current_time = time
+        for i in range(len(self.players)):
+            self.players[i].room = self.initial_room[i]
         for t in self.timelines:
             if t:
                 t.seek(time)
+        for player in self.players:
+            player.refresh()
         
     def advance(self):
         while True:
             if self.active_timeline():
                 if not self.active_timeline().advance():
-                    return
+                    break
             self.active_player += 1
             if self.active_player >= len(self.timelines):
                 self.active_player = 0
                 self.current_time += 1
                 for sprite in self.sprites:
                     sprite.rect.left -= self.images[0].get_width()
+        for player in self.players:
+            player.refresh()
 
     def insert(self, player_no):
         if self.timelines[player_no]:
             self.timelines[player_no] = Timeline(player_no, self, planned=self.timelines[player_no].actions, start_time=self.current_time)
         else:
             self.timelines[player_no] = Timeline(player_no, self, start_time=self.current_time)
+        self.players[player_no].timeline = self.timelines[player_no]
+        self.players[player_no].refresh()
 
     def do(self, action):
         self.active_timeline().do(action)

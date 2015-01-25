@@ -15,12 +15,12 @@ class Map:
         self.menu = menus.Popup(sprites, tm, screen)
         self.room_map = {}
         for room in data['rooms']:
-            r = Room(room, self.menu, data['directory'])
+            r = Room(room, self.menu, data['directory'], tm)
             sprites.add(r)
             self.room_map[room['name']] = r
 
 class Room(widgets.WorldWidget):
-    def __init__(self, data, menu, directory):
+    def __init__(self, data, menu, directory, tm):
         widgets.WorldWidget.__init__(self, data['position'])
         self._layer = layers.MAP
         self.name = data['name']
@@ -33,6 +33,7 @@ class Room(widgets.WorldWidget):
         self.actions = []
         self.width = self.unscaled_image.get_width()
         self.height = self.unscaled_image.get_height()
+        self.tm = tm
         if 'actions' in data:
             for action in data['actions']:
                 self.actions.append(construct_action(action))
@@ -43,14 +44,24 @@ class Room(widgets.WorldWidget):
         self.menu = menu
 
     def over(self):
+        widgets.WorldWidget.over(self)
         self.image = self.active_image
 
     def out(self):
+        widgets.WorldWidget.out(self)
         self.image = self.base_image
 
     def pressed(self, pos, button):
+        widgets.WorldWidget.pressed(self, pos, button)
         if button == 1:
-            self.menu.show(pos, self.actions)
+            room = self.tm.active_avatar().room
+            if room == self:
+                self.menu.show(pos, self.actions)
+            else:
+                for link in room.links:
+                    if link.room == self.name:
+                        self.menu.show(pos, [actions.Move("Go here", link.cost, room, self, self.tm)])
+                        break
 
     def update(self, camera):
         widgets.WorldWidget.update(self, camera)
