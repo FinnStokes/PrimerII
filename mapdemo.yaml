@@ -32,7 +32,7 @@ rooms:
 
     - name: RoomNW
       position: [20,23]
-      centre: [29,24]
+      centre: [29,34]
       inactive: roomNW.png
       active: roomNW.png
       actions:
@@ -45,7 +45,7 @@ rooms:
 
     - name: lBubble
       position: [0,38]
-      centre: [13,15]
+      centre: [13,51]
       inactive: lbubbleW.png
       active: lbubbleW.png
       actions:
@@ -106,3 +106,16 @@ rooms:
           cost: 3
         - room: CorridorCW
           cost: 3
+
+    - name: RoomN
+      position: [38,10]
+      centre: [50,23]
+      inactive: roomN.png
+      active: roomN.png
+      actions:
+        - name: Rummage in filing cabinet
+          type: inspect
+          cost: 1
+        - name: Read abandoned birthday card
+          type: read
+          cost: 1
