@@ -26,61 +26,77 @@ class Item(widgets.Widget):
     	widgets.Widget.__init__(self)
         self.name = data['name']
         self.desc = data['desc']
-        self.centre = data['centre']
-        self.image, self.rect = resources.load_png(os.path.join('items', data['onMap']))
+        image, rect = resources.load_png(os.path.join('items', data['onMap']))
+        rect.center = data['centre']
+        self.set_image(image)
+        self.set_rect(rect)
         self.mask = pygame.mask.from_surface(self.image)
         self._layer = layers.OBJECTS
         sprites.add(self)
 
 class Inventory:
-	def __init__(self, timeline, sprites):
-		#timelines must start at 0
-		self._layer = layers.HUD
-		self.timeline = timeline
-                self.sprites = sprites
+    def __init__(self, timeline, sprites):
+        #timelines must start at 0
+        self._layer = layers.HUD
+        self.timeline = timeline
+        self.sprites = sprites
 
-		widthchunk = INVBOX_WIDTH/(INV_ITEMS+1)
-		heightchunk = INVBOX_HEIGHT/MAX_TIMELINES
-		self.allcentres = [ [INVBOX_CORNER[0]+math.ceil((ii+0.5)*widthchunk),
-                                     INVBOX_CORNER[1]+math.ceil((self.timeline+0.5)*heightchunk)]
-                                    for ii in range(INV_ITEMS)]
+        widthchunk = INVBOX_WIDTH/(INV_ITEMS+1)
+        heightchunk = INVBOX_HEIGHT/MAX_TIMELINES
+        self.allcentres = [ [INVBOX_CORNER[0]+math.ceil((ii+0.5)*widthchunk),
+                             INVBOX_CORNER[1]+math.ceil((self.timeline+0.5)*heightchunk)]
+                           for ii in range(INV_ITEMS)]
 
-		self.invList = []
-		for ii in range(INV_ITEMS):
-			newItem=Item(BLANK,sprites)
-			newItem.centre = self.allcentres[ii]
-			self.invList.append(newItem)
+        self.invList = []
+        for ii in range(INV_ITEMS):
+            newItem = Item(BLANK,sprites)
+            rect = newItem.rect.copy()
+            rect.center = self.allcentres[ii]
+            newItem.set_rect(rect)
+            self.invList.append(newItem)
 
-	def addItem(self, newItem):
-		for ii in range(INV_ITEMS):
-			if self.invList[ii].name == 'blank':
-				newItem.centre = self.allcentres[ii]
-				self.invList[ii] = newItem
-				return True
-		return False
+    def addItem(self, newItem):
+        for ii in range(INV_ITEMS):
+            if self.invList[ii].name == 'blank':
+                rect = newItem.rect.copy()
+                rect.center = self.allcentres[ii]
+                newItem.set_rect(rect)
+                self.invList[ii] = newItem
+                return True
+        return False
 
-	def popItem(self,itemName,newCentre):
-		for ii in range(INV_ITEMS):
-			if self.invList[ii].name == itemName:
-				self.invList[ii].centre = newCentre
-				for jj in range(ii,INV_ITEMS-1):
-					self.invList[jj]=self.invList[jj+1]
-					self.invList[jj].centre=self.allcentres[jj]
-				self.invList[INV_ITEMS-1]=Item(BLANK,self.sprites)
-				self.invList[INV_ITEMS-1].centre=self.allcentres[INV_ITEMS-1]
-				return True
-		return False
+    def popItem(self,itemName,newCentre):
+        for ii in range(INV_ITEMS):
+            if self.invList[ii].name == itemName:
+                rect = self.invList[ii].rect.copy()
+                rect.center = newCentre
+                self.invList[ii].set_rect(rect)
+                for jj in range(ii,INV_ITEMS-1):
+                    self.invList[jj] = self.invList[jj+1]
+                    rect = self.invList[jj].rect.copy()
+                    rect.center = self.allcentres[jj]
+                    self.invList[jj].set_rect(rect)
+                self.invList[INV_ITEMS-1]=Item(BLANK,self.sprites)
+                rect = self.invList[INV_ITEMS-1].rect.copy()
+                rect.center = self.allcentres[INV_ITEMS-1]
+                self.invList[INV_ITEMS-1].set_rect(rect)
+                return True
+        return False
 
-	def clearItem(self,itemName):
-		for ii in range(INV_ITEMS):
-			if self.invList[ii].name == itemName:
-				for jj in range(ii,INV_ITEMS-1):
-					self.invList[jj]=self.invList[jj+1]
-					self.invList[jj].centre=self.allcentres[jj]
-				self.invList[INV_ITEMS-1]=Item(BLANK,self.sprites)
-				self.invList[INV_ITEMS-1].centre=self.allcentres[INV_ITEMS-1]
-				return True
-		return False
+    def clearItem(self,itemName):
+        for ii in range(INV_ITEMS):
+            if self.invList[ii].name == itemName:
+                for jj in range(ii,INV_ITEMS-1):
+                    self.invList[jj] = self.invList[jj+1]
+                    rect = self.invList[jj].rect.copy()
+                    rect.center = self.allcentres[jj]
+                    self.invList[jj].set_rect(rect)
+                self.invList[INV_ITEMS-1] = Item(BLANK,self.sprites)
+                rect = self.invList[INV_ITEMS-1].rect.copy()
+                rect.center = self.allcentres[INV_ITEMS-1]
+                self.invList[INV_ITEMS-1].set_rect(rect)
+                return True
+        return False
 
 
 
