@@ -32,7 +32,7 @@ class Canceller(widgets.Widget):
     def __init__(self, parent, rect):
         widgets.Widget.__init__(self)
         self.parent = parent
-        self.rect = rect
+        self.set_rect(rect)
         self._layer = layers.HUD
         self.image = pygame.Surface((0,0))
 

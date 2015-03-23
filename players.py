@@ -25,8 +25,8 @@ class Player(widgets.Widget):
         self.bright.fill(colour)
         self.dull = self.bright.copy()
         self.dull.fill((127,127,127), special_flags=BLEND_RGB_MULT)
-        self.image = self.bright
-        self.rect = self.image.get_rect()
+        self.set_image(self.bright)
+        self.set_rect(self.image.get_rect())
         self.active = False
         self.room = room
         self.blocking = False
@@ -36,7 +36,9 @@ class Player(widgets.Widget):
             if not self.active:
                 self.sprites.add(self)
                 self.active = True
-            self.rect.topleft = ((self.room.centre[0]+OFFSET[self.id][0])*10, (self.room.centre[1]+OFFSET[self.id][1])*10)
+            rect = self.rect.copy()
+            rect.topleft = ((self.room.centre[0]+OFFSET[self.id][0])*10, (self.room.centre[1]+OFFSET[self.id][1])*10)
+            self.set_rect(rect)
             if self.id == activePlayer:
                 self.image = self.bright
             else:

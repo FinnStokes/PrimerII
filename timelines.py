@@ -108,11 +108,14 @@ class ActionWidget(widgets.Widget):
     def __init__(self, action, timeline, tm):
         widgets.Widget.__init__(self)
         self.action = action
-        self.image = tm.images[action.cost-1].copy()
-        self.image.fill(COLOURS[timeline], special_flags=BLEND_RGB_MULT)
-        self.rect = self.image.get_rect()
-        self.rect.top = PANE_TOP + SPACING + (SPACING + self.image.get_height()) * timeline
-        self.rect.left = CURRENT_TIME_X
+        image = tm.images[action.cost-1].copy()
+        image.fill(COLOURS[timeline], special_flags=BLEND_RGB_MULT)
+        self.set_image(image)
+        rect = self.image.get_rect()
+        rect.top = PANE_TOP + SPACING + (SPACING + self.image.get_height()) * timeline
+        rect.left = CURRENT_TIME_X
+        self.set_rect(rect)
+        
         self._layer = layers.HUD
                 
 class TimelineManager:
@@ -139,7 +142,9 @@ class TimelineManager:
     def seek(self, time):
         self.active_player = 0
         for sprite in self.sprites:
-            sprite.rect.left -= self.images[0].get_width() * (time - self.current_time)
+            rect = sprite.rect.copy()
+            rect.left -= self.images[0].get_width() * (time - self.current_time)
+            sprite.set_rect(rect)
         self.current_time = time
         for i in range(len(self.players)):
             self.players[i].room = self.initial_room[i]
@@ -159,7 +164,9 @@ class TimelineManager:
                 self.active_player = 0
                 self.current_time += 1
                 for sprite in self.sprites:
-                    sprite.rect.left -= self.images[0].get_width()
+                    rect = sprite.rect.copy()
+                    rect.left -= self.images[0].get_width()
+                    sprite.set_rect(rect)
         for player in self.players:
             player.refresh(self.active_player)
 

@@ -25,14 +25,14 @@ class Room(widgets.WorldWidget):
         self._layer = layers.MAP
         self.name = data['name']
         self.centre = data['centre']
-        self.base_image, self.rect = resources.load_png(os.path.join(directory, data['inactive']))
+        self.base_image, rect = resources.load_png(os.path.join(directory, data['inactive']))
         self.active_image, _ = resources.load_png(os.path.join(directory, data['active']))
-        self.unscaled_image = self.base_image
-        self.image = self.unscaled_image
-        self.mask = pygame.mask.from_surface(self.unscaled_image)
+        self.set_image(self.base_image)
+        self.set_rect(rect)
+        self.mask = pygame.mask.from_surface(self.image)
         self.actions = []
-        self.width = self.unscaled_image.get_width()
-        self.height = self.unscaled_image.get_height()
+        self.width = self.base_image.get_width()
+        self.height = self.base_image.get_height()
         self.tm = tm
         if 'actions' in data:
             for action in data['actions']:
@@ -45,11 +45,11 @@ class Room(widgets.WorldWidget):
 
     def over(self):
         widgets.WorldWidget.over(self)
-        self.image = self.active_image
+        self.set_image(self.active_image)
 
     def out(self):
         widgets.WorldWidget.out(self)
-        self.image = self.base_image
+        self.set_image(self.base_image)
 
     def pressed(self, pos, button):
         widgets.WorldWidget.pressed(self, pos, button)

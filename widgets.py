@@ -4,7 +4,23 @@ class Widget(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.blocking = True
+        self.rect = None
+        self.image = None
+        self._base_image = None
 
+    def set_image(self, image):
+        self._base_image = image
+        self.image = image
+        self.rescale_image()
+
+    def set_rect(self, rect):
+        self.rect = rect
+        self.rescale_image()
+        
+    def rescale_image(self):
+        if self.rect and self.image and self._base_image and (self.rect.width != self.image.get_width() or self.rect.height != self.image.get_height()):
+            self.image = pygame.transform.scale(self._base_image, self.rect.size)
+        
     def over(self):
         pass
 
@@ -30,12 +46,10 @@ class WorldWidget(Widget):
         self.position = pos
 
     def update(self, camera):
-        self.rect.top = camera.screen.top + (self.position[1] - camera.world.top) * camera.screen.width / camera.world.width
-        self.rect.left = camera.screen.left + (self.position[0] - camera.world.left) * camera.screen.height / camera.world.height
-        self.rect.width = self.width * camera.screen.width / camera.world.width
-        self.rect.height = self.height * camera.screen.height / camera.world.height
-        if self.rect.width != self.image.get_width() or self.rect.height != self.image.get_height():
-            self.image = pygame.transform.scale(self.unscaled_image, self.rect.size)
+        self.set_rect(pygame.Rect(camera.screen.left + (self.position[0] - camera.world.left) * camera.screen.height / camera.world.height,
+                                  camera.screen.top + (self.position[1] - camera.world.top) * camera.screen.width / camera.world.width,
+                                  self.width * camera.screen.width / camera.world.width,
+                                  self.height * camera.screen.height / camera.world.height))
     
 class BasicWidget(Widget):
     def __init__(self, rect, baseColour, hoverColour, pressedColour):
@@ -50,22 +64,22 @@ class BasicWidget(Widget):
         self.pressedImage = pygame.Surface([rect.width, rect.height])
         self.pressedImage.fill(pressedColour)
 
-        self.image = self.baseImage
-        self.rect = rect
+        self.set_image(self.baseImage)
+        self.set_rect(rect)
 
     def over(self):
-        self.image = self.hoverImage
+        self.set_image(self.hoverImage)
 
     def out(self):
-        self.image = self.baseImage
+        self.set_image(self.baseImage)
 
     def pressed(self, pos, button):
         if button == 1:
-            self.image = self.pressedImage
+            self.set_image(self.pressedImage)
 
     def released(self, pos, button):
         if button == 1:
-            self.image = self.hoverImage
+            self.set_image(self.hoverImage)
 
 class TextWidget(BasicWidget):
     def __init__(self,rect,baseColour,hoverColour,pressedColour,textColour,incText):
@@ -81,8 +95,8 @@ class TextWidget(BasicWidget):
         self.hoverImage.blit(self.textImage, (10,10))
         self.pressedImage.blit(self.textImage, (10,10))
 
-        self.image=self.baseImage
-        self.rect = rect
+        self.set_image(self.baseImage)
+        self.set_rect(rect)
 
 
 def update(sprites, active, pos):
