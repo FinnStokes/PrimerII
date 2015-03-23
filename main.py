@@ -3,7 +3,8 @@
 # Primer II: Electric Boogaloo
 # Travel through time to prevent time travel from existing!
 
-import os
+import argparse
+import cProfile
 
 import pygame
 from pygame.locals import *
@@ -16,7 +17,7 @@ import maps
 import timelines
 import widgets
 
-def main():
+def main(**kwargs):
     # Initialise mixer
     pygame.mixer.pre_init(44100, -16, 2, 4096)
 
@@ -134,4 +135,12 @@ def main():
         sprites.draw(screen)
         pygame.display.flip()
 
-if __name__ == '__main__': main()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Time travel game by 3 Silly Hats.')
+    parser.add_argument('--profile-file', action='store')
+    parser.add_argument('-p', '--profile', action='store_true')
+    args = parser.parse_args()
+    if args.profile:
+        cProfile.run("main(**vars(args))", filename=args.profile_file)
+    else:
+        main(**vars(args))
