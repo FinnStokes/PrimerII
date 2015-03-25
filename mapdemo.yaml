@@ -29,6 +29,9 @@ rooms:
           cost: 3
         - room: RoomNW
           cost: 2
+      items:
+        - Hammer
+        - Tablet
 
     - name: RoomNW
       position: [20,23]

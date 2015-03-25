@@ -31,6 +31,10 @@ class Room(widgets.WorldWidget):
         self.set_rect(rect)
         self.mask = pygame.mask.from_surface(self.image)
         self.actions = []
+        if 'items' in data:
+            self.items = data['items']
+        else:
+            self.items = []
         self.width = self.base_image.get_width()
         self.height = self.base_image.get_height()
         self.tm = tm
@@ -56,7 +60,7 @@ class Room(widgets.WorldWidget):
         if button == 1:
             room = self.tm.active_avatar().room
             if room == self:
-                self.menu.show(pos, self.actions)
+                self.menu.show(pos, self.actions + [actions.Take("Take "+item, 1, item, self.tm) for item in self.items])
             else:
                 for link in room.links:
                     if link.room == self.name:

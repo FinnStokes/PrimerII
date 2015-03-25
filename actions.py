@@ -21,3 +21,31 @@ class Move(Action):
 
     def perform(self, player):
         self.tm.players[player].room = self.toRoom
+
+class Take(Action):
+    def __init__(self, name, cost, item, tm):
+        Action.__init__(self, name, cost)
+        self.item = item
+        self.tm = tm
+
+    def isvalid(self, player):
+        room = self.tm.players[player].room
+        return not self.tm.inventories[player].isfull() and self.item in room.items
+
+    def perform(self, player):
+        room = self.tm.players[player].room
+        room.items.remove(self.item)
+        self.tm.inventories[player].addItem(self.item)
+
+class Drop(Action):
+    def __init__(self, name, cost, item, tm):
+        Action.__init__(self, name, cost)
+        self.item = item
+        self.tm = tm
+
+    def isvalid(self, player):
+        return self.item in self.tm.inventories[player].items
+
+    def perform(self, player):
+        self.tm.inventories[player].popItem(self.item)
+        self.room.items.append(self.item)
