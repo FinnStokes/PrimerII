@@ -19,6 +19,10 @@ class Map:
             sprites.add(r)
             self.room_map[room['name']] = r
 
+    def reset(self):
+        for room in self.room_map.values():
+            room.reset()
+
 class Room(widgets.WorldWidget):
     def __init__(self, data, menu, directory, tm):
         widgets.WorldWidget.__init__(self, data['position'])
@@ -32,9 +36,10 @@ class Room(widgets.WorldWidget):
         self.mask = pygame.mask.from_surface(self.image)
         self.actions = []
         if 'items' in data:
-            self.items = data['items']
+            self.initial_items = data['items']
         else:
-            self.items = []
+            self.initial_items = []
+        self.items = list(self.initial_items)
         self.width = self.base_image.get_width()
         self.height = self.base_image.get_height()
         self.tm = tm
@@ -71,6 +76,9 @@ class Room(widgets.WorldWidget):
         widgets.WorldWidget.update(self, camera)
         if self.mask.get_size() != self.image.get_size():
             self.mask = pygame.mask.from_surface(self.image)
+
+    def reset(self):
+        self.items = list(self.initial_items)
         
 class Link:
     def __init__(self, data):

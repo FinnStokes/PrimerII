@@ -32,7 +32,7 @@ class Slot(widgets.Widget):
         self.tm = tm
 
     def pressed(self, pos, button):
-        if button == 1 and len(self.inventory.items) > self.slot_no:
+        if button == 1 and len(self.inventory.items) > self.slot_no and self.inventory.timeline == self.tm.active_player:
             item = self.inventory.items[self.slot_no]
             self.menu.show(pos, [actions.Drop("Drop "+item, 1, item, self.tm)])
 
@@ -54,6 +54,7 @@ class Inventory:
         
         self.slots = []
         self.items = []
+        self.initial = list(self.items)
         for ii in range(INV_ITEMS):
             newSlot = Slot(self, menu, ii, tm, self.allcentres[ii], heightchunk-10, heightchunk-10)
             self.sprites.add(newSlot)
@@ -84,3 +85,7 @@ class Inventory:
                 name = "blank.png"
             img, _ = resources.load_png(os.path.join('items', name))
             self.slots[ii].set_image(img)
+
+    def reset(self):
+        self.items = list(self.initial)
+        self.update()

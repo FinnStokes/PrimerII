@@ -13,9 +13,9 @@ COLOURS = ((255,0,0), (0,255,0), (0,0,255), (255, 255, 0), (255, 0, 255))
 
 class Timeline:
     def __init__(self, player, tm, actions=[], planned=None, start_time=0):
-        self.actions = actions[:]
+        self.actions = list(actions)
         if planned:
-            self.planned = planned[:]
+            self.planned = list(planned)
         self.current_action = -1
         self.ticks = 0
         self.start_time = start_time
@@ -71,15 +71,19 @@ class Timeline:
                     #print(self.player, "invalid action")
                     self.planned = self.actions
                     self.actions = self.actions[:self.current_action]
-                    print("clear")
+                    self.current_action -= 1
                     self.tm.sprites.remove(self.sprites)
                     self.tm.allsprites.remove(self.sprites)
                     self.sprites.empty()
                     for action in self.actions:
-                        aw = ActionWidget(action, self.player)
+                        aw = ActionWidget(action, self.player, self.tm)
                         self.sprites.add(aw)
                         self.tm.sprites.add(aw)
                         self.tm.allsprites.add(aw)
+                        for sprite in self.sprites:
+                            rect = sprite.rect.copy()
+                            rect.left -= self.tm.images[0].get_width()*action.cost
+                            sprite.set_rect(rect)
                     return False
             else:
                 #print(self.player, "out of actions")
@@ -96,9 +100,15 @@ class Timeline:
         self.sprites.add(aw)
         self.tm.sprites.add(aw)
         self.tm.allsprites.add(aw)
+        action.first_perform(self.player)
 
     def isactive(self):
         return self.active and self.current_time >= self.start_time
+
+    def clear(self):
+        self.tm.sprites.remove(self.sprites)
+        self.tm.allsprites.remove(self.sprites)
+        self.sprites.empty()
 
 PANE_TOP = 880
 SPACING = 15
@@ -119,7 +129,7 @@ class ActionWidget(widgets.Widget):
         self._layer = layers.HUD
                 
 class TimelineManager:
-    def __init__(self, sprites, screen):
+    def __init__(self, sprites, screen, m=None):
         self.timelines = [Timeline(0, self), None, None, None, None]
         self.inventories = [inventory.Inventory(i, sprites, screen, self) for i in range(5)]
         self.initial_room = [None] * 5
@@ -129,6 +139,7 @@ class TimelineManager:
         self.sprites = pygame.sprite.Group()
         self.allsprites = sprites
         self.images = [resources.load_png(os.path.join('timeline', str(cost)+'part.png'))[0] for cost in range(1,6)]
+        self.map = m
 
     def active_timeline(self):
         return self.timelines[self.active_player]
@@ -146,8 +157,11 @@ class TimelineManager:
             rect.left -= self.images[0].get_width() * (time - self.current_time)
             sprite.set_rect(rect)
         self.current_time = time
+        self.map.reset()
         for i in range(len(self.players)):
             self.players[i].room = self.initial_room[i]
+        for inventory in self.inventories:
+            inventory.reset()
         for t in self.timelines:
             if t:
                 t.seek(time)
@@ -172,7 +186,9 @@ class TimelineManager:
 
     def insert(self, player_no):
         if self.timelines[player_no]:
-            self.timelines[player_no] = Timeline(player_no, self, planned=self.timelines[player_no].actions, start_time=self.current_time)
+            old = self.timelines[player_no]
+            self.timelines[player_no] = Timeline(player_no, self, planned=old.actions, start_time=self.current_time)
+            old.clear()
         else:
             self.timelines[player_no] = Timeline(player_no, self, start_time=self.current_time)
         self.players[player_no].timeline = self.timelines[player_no]

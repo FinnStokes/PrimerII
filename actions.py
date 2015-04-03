@@ -9,6 +9,9 @@ class Action:
     def perform(self, player):
         pass
 
+    def first_perform(self, player):
+        pass
+
 class Move(Action):
     def __init__(self, name, cost, fromRoom, toRoom, tm):
         Action.__init__(self, name, cost)
@@ -49,3 +52,23 @@ class Drop(Action):
     def perform(self, player):
         self.tm.inventories[player].popItem(self.item)
         self.tm.players[player].room.items.append(self.item)
+
+class TimeTravel(Action):
+    def __init__(self, name, cost, time, timeline, tm):
+        Action.__init__(self, name, cost)
+        self.time = time
+        self.timeline = timeline
+        self.tm = tm
+
+    def isvalid(self, player):
+        return True
+
+    def perform(self, player):
+        self.tm.timelines[player].active = False
+    
+    def first_perform(self, player):
+        inventory = self.tm.inventories[player].items
+        self.tm.seek(self.time)
+        self.tm.insert(self.timeline)
+        self.tm.inventories[self.timeline].initial = list(inventory)
+        self.tm.inventories[self.timeline].reset()

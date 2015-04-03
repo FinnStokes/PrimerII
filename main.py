@@ -50,7 +50,8 @@ def main(**kwargs):
 
     with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites, tm, screenRect)
-
+    tm.map = m
+        
     for i in range(len(tm.initial_room)):
         tm.initial_room[i] = m.room_map['CorridorNW']
         tm.players[i].room = tm.initial_room[i]
@@ -71,53 +72,53 @@ def main(**kwargs):
                 if event.key == K_ESCAPE:
                     done = True
                 elif event.key == K_KP0:
-                    tm.seek(0)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 0", 1, 0, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP1:
-                    tm.seek(1)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 1", 1, 1, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP2:
-                    tm.seek(2)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 2", 1, 2, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP3:
-                    tm.seek(3)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 3", 1, 3, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP4:
-                    tm.seek(4)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 4", 1, 4, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP5:
-                    tm.seek(5)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 5", 1, 5, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP6:
-                    tm.seek(6)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 6", 1, 6, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP7:
-                    tm.seek(7)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 7", 1, 7, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP8:
-                    tm.seek(8)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 8", 1, 8, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
                 elif event.key == K_KP9:
-                    tm.seek(9)
-                    tm.insert(next_tl)
+                    action = actions.TimeTravel("Travel to time 9", 1, 9, next_tl, tm)
+                    tm.do(action)
                     tm.advance()
                     next_tl += 1
             elif event.type == MOUSEBUTTONDOWN:
