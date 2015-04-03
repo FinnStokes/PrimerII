@@ -6,6 +6,7 @@ import math
 
 import actions
 import layers
+import menus
 import resources
 import widgets
 
@@ -16,7 +17,7 @@ MAX_TIMELINES = 5
 INV_ITEMS = 4
 
 class Slot(widgets.Widget):
-    def __init__(self, centre, width, height):
+    def __init__(self, inventory, menu, slot_no, tm, centre, width, height):
     	widgets.Widget.__init__(self)
         image, _ = resources.load_png(os.path.join('items', 'blank.png'))
         rect = pygame.Rect(0, 0, width, height)
@@ -25,9 +26,19 @@ class Slot(widgets.Widget):
         self.set_rect(rect)
         self.mask = pygame.mask.from_surface(self.image)
         self._layer = layers.OBJECTS
+        self.inventory = inventory
+        self.menu = menu
+        self.slot_no = slot_no
+        self.tm = tm
+
+    def pressed(self, pos, button):
+        if button == 1 and len(self.inventory.items) > self.slot_no:
+            item = self.inventory.items[self.slot_no]
+            self.menu.show(pos, [actions.Drop("Drop "+item, 1, item, self.tm)])
+
 
 class Inventory:
-    def __init__(self, timeline, sprites):
+    def __init__(self, timeline, sprites, screen, tm):
         #timelines must start at 0
         self._layer = layers.HUD
         self.timeline = timeline
@@ -39,10 +50,12 @@ class Inventory:
                              INVBOX_CORNER[1]+math.ceil((self.timeline+0.5)*heightchunk)]
                            for ii in range(INV_ITEMS)]
 
+        menu = menus.Popup(sprites, tm, screen)
+        
         self.slots = []
         self.items = []
         for ii in range(INV_ITEMS):
-            newSlot = Slot(self.allcentres[ii], heightchunk-10, heightchunk-10)
+            newSlot = Slot(self, menu, ii, tm, self.allcentres[ii], heightchunk-10, heightchunk-10)
             self.sprites.add(newSlot)
             self.slots.append(newSlot)
 

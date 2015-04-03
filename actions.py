@@ -48,4 +48,4 @@ class Drop(Action):
 
     def perform(self, player):
         self.tm.inventories[player].popItem(self.item)
-        self.room.items.append(self.item)
+        self.tm.players[player].room.items.append(self.item)

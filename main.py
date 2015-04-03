@@ -46,7 +46,7 @@ def main(**kwargs):
     #sprites.add(btn1, btn2)
     #sprites.add(btn3, layer=layers.MAP)
 
-    tm = timelines.TimelineManager(sprites)
+    tm = timelines.TimelineManager(sprites, screenRect)
 
     with open("mapdemo.yaml") as f:
         m = maps.Map(f, sprites, tm, screenRect)

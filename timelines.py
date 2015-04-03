@@ -119,9 +119,9 @@ class ActionWidget(widgets.Widget):
         self._layer = layers.HUD
                 
 class TimelineManager:
-    def __init__(self, sprites):
+    def __init__(self, sprites, screen):
         self.timelines = [Timeline(0, self), None, None, None, None]
-        self.inventories = [inventory.Inventory(i, sprites) for i in range(5)]
+        self.inventories = [inventory.Inventory(i, sprites, screen, self) for i in range(5)]
         self.initial_room = [None] * 5
         self.players = [players.Player(i, COLOURS[i], sprites, self.timelines[i], self.inventories[i], self.initial_room[i]) for i in range(5)]
         self.active_player = 0
