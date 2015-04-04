@@ -38,6 +38,10 @@ rooms:
       centre: [29,34]
       inactive: roomNW.png
       active: roomNW.png
+      rift:
+        name: Enter green rift
+        time: 1
+        timeline: 1
       actions:
         - name: Read office document
           type: read
@@ -71,6 +75,10 @@ rooms:
       centre: [14,76]
       inactive: roomSW.png
       active: roomSW.png
+      rift:
+        name: Enter purple rift
+        time: 16
+        timeline: 4
       actions:
         - name: Log in to network
           type: activate
@@ -192,6 +200,10 @@ rooms:
       centre: [66,71]
       inactive: storageSA.png
       active: storageSA.png
+      rift:
+        name: Enter blue rift
+        time: 6
+        timeline: 2
       actions:
         - name: Look at all those cans!
           type: inspect
@@ -208,6 +220,10 @@ rooms:
       centre: [66,80]
       inactive: storageSB.png
       active: storageSB.png
+      rift:
+        name: Enter yellow rift
+        time: 4
+        timeline: 3
       actions:
         - name: Look at all those boxes!
           type: inspect

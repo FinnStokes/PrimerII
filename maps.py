@@ -57,6 +57,9 @@ class Room(widgets.WorldWidget):
         self.centre = data['centre']
         self.base_image, rect = resources.load_png(os.path.join(directory, data['inactive']))
         self.active_image, _ = resources.load_png(os.path.join(directory, data['active']))
+        self.mouse_over = False
+        self.out_image = self.base_image
+        self.over_image = self.active_image
         self.set_image(self.base_image)
         self.set_rect(rect)
         self.mask = pygame.mask.from_surface(self.image)
@@ -70,6 +73,13 @@ class Room(widgets.WorldWidget):
         self.height = self.base_image.get_height()
         self.tm = tm
         self.map = m
+        self.rift = None
+        if 'rift' in data:
+            self.rift = actions.TimeTravel(data['rift']['name'], 1, data['rift']['time'], data['rift']['timeline'], tm)
+            self.showing_rift = False
+            self.rift_base_image, _ = resources.load_png(os.path.join(directory, "rift"+str(data['rift']['timeline'])+"."+data['inactive']))
+            self.rift_active_image, _ = resources.load_png(os.path.join(directory, "rift"+str(data['rift']['timeline'])+"."+data['active']))
+            self.actions.append(self.rift)
         if 'actions' in data:
             for action in data['actions']:
                 self.actions.append(construct_action(action))
@@ -81,11 +91,13 @@ class Room(widgets.WorldWidget):
 
     def over(self):
         widgets.WorldWidget.over(self)
-        self.set_image(self.active_image)
-
+        self.set_image(self.over_image)
+        self.mouse_over = True
+        
     def out(self):
         widgets.WorldWidget.out(self)
-        self.set_image(self.base_image)
+        self.set_image(self.out_image)
+        self.mouse_over = False
 
     def pressed(self, pos, button):
         widgets.WorldWidget.pressed(self, pos, button)
@@ -102,6 +114,26 @@ class Room(widgets.WorldWidget):
 
     def update(self, camera):
         widgets.WorldWidget.update(self, camera)
+        if self.rift:
+            if self.rift.isvalid(self.tm.active_player):
+                if not self.showing_rift:
+                    self.showing_rift = True
+                    self.out_image = self.rift_base_image
+                    self.over_image = self.rift_active_image
+                    if self.mouse_over:
+                        self.set_image(self.over_image)
+                    else:
+                        self.set_image(self.out_image)
+            else:
+                if self.showing_rift:
+                    self.showing_rift = False
+                    self.out_image = self.base_image
+                    self.over_image = self.active_image
+                    if self.mouse_over:
+                        self.set_image(self.over_image)
+                    else:
+                        self.set_image(self.out_image)
+
         if self.mask.get_size() != self.image.get_size():
             self.mask = pygame.mask.from_surface(self.image)
 

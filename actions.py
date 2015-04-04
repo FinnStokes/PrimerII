@@ -79,7 +79,7 @@ class TimeTravel(Action):
         self.incentory = []
 
     def isvalid(self, player):
-        return self.tm.map.get_rift(self.timeline)
+        return self.tm.map.get_rift(self.timeline) and self.tm.current_time > self.time
 
     def perform(self, player):
         self.tm.timelines[player].active = False
@@ -89,8 +89,9 @@ class TimeTravel(Action):
     
     def first_perform(self, player):
         inventory = self.tm.inventories[player].items
-        self.tm.seek(self.time)
-        self.tm.insert(self.timeline)
         self.tm.inventories[self.timeline].initial = list(inventory)
         self.tm.inventories[self.timeline].reset()
+        self.tm.initial_room[self.timeline] = self.tm.players[player].room
+        self.tm.seek(self.time)
+        self.tm.insert(self.timeline)
         self.inventory = sorted(inventory)

@@ -96,6 +96,9 @@ class Timeline:
         return True
 
     def do(self, action):
+        if not action.isvalid(self.player):
+            print("Error doing action '"+action.name+"': action invalid")
+            return
         if isinstance(action, Action):
             self.actions.append(action)
             aw = ActionWidget(action, self.player, self.tm)
@@ -114,7 +117,10 @@ class Timeline:
                 ticks += act.cost
                 act.first_perform(self.player)
         else:
-            print("Error doing action: not subclass of Action or CompoundAction")
+            if action.name:
+                print("Error doing action '"+action.name+"': not subclass of Action or CompoundAction")
+            else:
+                print("Error doing unnamed action: not subclass of Action or CompoundAction")
 
     def isactive(self):
         return self.active and self.current_time >= self.start_time
