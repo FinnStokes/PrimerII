@@ -13,6 +13,8 @@ class Map:
     def __init__(self, map_file, sprites, tm, screen):
         data = yaml.safe_load(map_file)
         self.menu = menus.Popup(sprites, tm, screen)
+        self.initial_rifts = [i != 0 for i in range(5)]
+        self._rifts = list(self.initial_rifts)
         self.room_map = {}
         for room in data['rooms']:
             r = Room(room, self.menu, data['directory'], tm)
@@ -20,8 +22,15 @@ class Map:
             self.room_map[room['name']] = r
 
     def reset(self):
+        self._rifts = list(self.initial_rifts)
         for room in self.room_map.values():
             room.reset()
+
+    def get_rift(self, timeline):
+        return self._rifts[timeline]
+
+    def set_rift(self, timeline, value):
+        self._rifts[timeline] = value
 
 class Room(widgets.WorldWidget):
     def __init__(self, data, menu, directory, tm):
@@ -65,7 +74,9 @@ class Room(widgets.WorldWidget):
         if button == 1:
             room = self.tm.active_avatar().room
             if room == self:
-                self.menu.show(pos, self.actions + [actions.Take("Take "+item, 1, item, self.tm) for item in self.items])
+                self.menu.show(pos, self.actions +
+                               [actions.Take("Take "+item, 1, item, self.tm) for item in self.items] +
+                               [actions.Drop("Drop "+item, 1, item, self.tm) for item in self.tm.active_inventory().items])
             else:
                 for link in room.links:
                     if link.room == self.name:

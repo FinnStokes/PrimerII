@@ -59,12 +59,16 @@ class TimeTravel(Action):
         self.time = time
         self.timeline = timeline
         self.tm = tm
+        self.incentory = []
 
     def isvalid(self, player):
-        return True
+        return self.tm.map.get_rift(self.timeline)
 
     def perform(self, player):
         self.tm.timelines[player].active = False
+        self.tm.map.set_rift(self.timeline, False)
+        if self.inventory != sorted(self.tm.inventories[player].items):
+            print("Error in time travel: incorrect inventory")
     
     def first_perform(self, player):
         inventory = self.tm.inventories[player].items
@@ -72,3 +76,4 @@ class TimeTravel(Action):
         self.tm.insert(self.timeline)
         self.tm.inventories[self.timeline].initial = list(inventory)
         self.tm.inventories[self.timeline].reset()
+        self.inventory = sorted(inventory)
