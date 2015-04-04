@@ -22,7 +22,10 @@ class Popup:
             if action.isvalid(self.tm.active_player):
                 self.items.add(Item(action, (x,y), self.tm, self))
                 y += ITEM_HEIGHT
-        self.sprites.add(self.items)
+        if len(self.items) > 1:
+            self.sprites.add(self.items)
+        else:
+            self.hide()
 
     def hide(self):
         self.sprites.remove(self.items)
