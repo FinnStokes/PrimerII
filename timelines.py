@@ -29,7 +29,7 @@ class Timeline:
     def seek(self, time):
         self.current_action = -1
         self.ticks = 0
-        self.current_time = self.start_time
+        self.current_time = min(self.start_time, time)
         self.active = True
         while self.current_time < time:
             if self.ticks <= 0:
@@ -53,7 +53,7 @@ class Timeline:
         self.ticks += self.current_time - time
 
     def advance(self):
-        if not self.active:
+        if not self.isactive():
             #print(self.player, "inactive")
             self.current_time += 1
             return True
