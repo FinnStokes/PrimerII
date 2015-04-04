@@ -12,18 +12,35 @@ class Action:
     def first_perform(self, player):
         pass
 
+class CompoundAction:
+    def __init__(self, name, actions):
+        self.name = name
+        self.actions = list(actions)
+        self.cost = sum([action.cost for action in actions])
+
+    def isvalid(self, player):
+        return True
+
 class Move(Action):
-    def __init__(self, name, cost, fromRoom, toRoom, tm):
-        Action.__init__(self, name, cost)
-        self.fromRoom = fromRoom
-        self.toRoom = toRoom
+    def __init__(self, name, link, tm, m):
+        Action.__init__(self, name, link.cost)
+        self.fromRoom = m.room_map[link.start]
+        self.toRoom = m.room_map[link.room]
+        self.link = link
         self.tm = tm
 
     def isvalid(self, player):
-        return self.tm.players[player].room == self.fromRoom
+        return self.tm.players[player].room == self.fromRoom and self.link.isvalid(player)
 
     def perform(self, player):
         self.tm.players[player].room = self.toRoom
+
+class MovePath(CompoundAction):
+    def __init__(self, name, path, tm, m):
+        CompoundAction.__init__(self, name, [Move(name, link, tm, m) for link in path])
+
+    def isvalid(self, player):
+        return self.actions[0].isvalid(player)
 
 class Take(Action):
     def __init__(self, name, cost, item, tm):

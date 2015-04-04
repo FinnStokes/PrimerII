@@ -1,4 +1,5 @@
 import os
+import heapq
 
 import pygame
 import yaml
@@ -17,7 +18,7 @@ class Map:
         self._rifts = list(self.initial_rifts)
         self.room_map = {}
         for room in data['rooms']:
-            r = Room(room, self.menu, data['directory'], tm)
+            r = Room(room, self.menu, data['directory'], tm, self)
             sprites.add(r)
             self.room_map[room['name']] = r
 
@@ -26,6 +27,22 @@ class Map:
         for room in self.room_map.values():
             room.reset()
 
+    def get_path(self, start, end, player):
+        visited = []
+        frontier = [(0, start, [])]
+        while len(frontier) > 0:
+            current = heapq.heappop(frontier)
+            if current[1] == end:
+                return current[2]
+            if current[1] in visited:
+                continue
+            visited.append(current[1])
+            for link in current[1].links:
+                newRoom = self.room_map[link.room]
+                if link.isvalid(player) and not newRoom in visited:
+                    heapq.heappush(frontier, (current[0] + link.cost, newRoom, current[2] + [link]))
+        return None
+
     def get_rift(self, timeline):
         return self._rifts[timeline]
 
@@ -33,7 +50,7 @@ class Map:
         self._rifts[timeline] = value
 
 class Room(widgets.WorldWidget):
-    def __init__(self, data, menu, directory, tm):
+    def __init__(self, data, menu, directory, tm, m):
         widgets.WorldWidget.__init__(self, data['position'])
         self._layer = layers.MAP
         self.name = data['name']
@@ -52,13 +69,14 @@ class Room(widgets.WorldWidget):
         self.width = self.base_image.get_width()
         self.height = self.base_image.get_height()
         self.tm = tm
+        self.map = m
         if 'actions' in data:
             for action in data['actions']:
                 self.actions.append(construct_action(action))
         self.links = []
         if 'links' in data:
             for link in data['links']:
-                self.links.append(Link(link))
+                self.links.append(Link(link, self.name))
         self.menu = menu
 
     def over(self):
@@ -78,10 +96,9 @@ class Room(widgets.WorldWidget):
                                [actions.Take("Take "+item, 1, item, self.tm) for item in self.items] +
                                [actions.Drop("Drop "+item, 1, item, self.tm) for item in self.tm.active_inventory().items])
             else:
-                for link in room.links:
-                    if link.room == self.name:
-                        self.menu.show(pos, [actions.Move("Go here", link.cost, room, self, self.tm)])
-                        break
+                path = self.map.get_path(room, self, self.tm.active_player)
+                if path:
+                    self.menu.show(pos, [actions.MovePath("Go here", path, self.tm, self.map)])
 
     def update(self, camera):
         widgets.WorldWidget.update(self, camera)
@@ -92,9 +109,13 @@ class Room(widgets.WorldWidget):
         self.items = list(self.initial_items)
         
 class Link:
-    def __init__(self, data):
+    def __init__(self, data, room):
+        self.start = room
         self.room = data['room']
         self.cost = data['cost']
+
+    def isvalid(self, player):
+        return True
 
 def construct_action(data):
     return actions.Action(data['name'], data['cost'])

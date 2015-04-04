@@ -3,6 +3,7 @@ import os
 import pygame
 from pygame.locals import *
 
+from actions import Action, CompoundAction
 import inventory
 import layers
 import players
@@ -95,12 +96,25 @@ class Timeline:
         return True
 
     def do(self, action):
-        self.actions.append(action)
-        aw = ActionWidget(action, self.player, self.tm)
-        self.sprites.add(aw)
-        self.tm.sprites.add(aw)
-        self.tm.allsprites.add(aw)
-        action.first_perform(self.player)
+        if isinstance(action, Action):
+            self.actions.append(action)
+            aw = ActionWidget(action, self.player, self.tm)
+            self.sprites.add(aw)
+            self.tm.sprites.add(aw)
+            self.tm.allsprites.add(aw)
+            action.first_perform(self.player)
+        elif isinstance(action, CompoundAction):
+            ticks = 0
+            for act in action.actions:
+                self.actions.append(act)
+                aw = ActionWidget(act, self.player, self.tm, offset=ticks)
+                self.sprites.add(aw)
+                self.tm.sprites.add(aw)
+                self.tm.allsprites.add(aw)
+                ticks += act.cost
+                act.first_perform(self.player)
+        else:
+            print("Error doing action: not subclass of Action or CompoundAction")
 
     def isactive(self):
         return self.active and self.current_time >= self.start_time
@@ -115,7 +129,7 @@ SPACING = 15
 CURRENT_TIME_X = 1920/2
 
 class ActionWidget(widgets.Widget):
-    def __init__(self, action, timeline, tm):
+    def __init__(self, action, timeline, tm, offset=0):
         widgets.Widget.__init__(self)
         self.action = action
         image = tm.images[action.cost-1].copy()
@@ -123,7 +137,7 @@ class ActionWidget(widgets.Widget):
         self.set_image(image)
         rect = self.image.get_rect()
         rect.top = PANE_TOP + SPACING + (SPACING + self.image.get_height()) * timeline
-        rect.left = CURRENT_TIME_X
+        rect.left = CURRENT_TIME_X + offset*tm.images[0].get_width()
         self.set_rect(rect)
         
         self._layer = layers.HUD
