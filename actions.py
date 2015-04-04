@@ -33,6 +33,7 @@ class Move(Action):
         return self.tm.players[player].room == self.fromRoom and self.link.isvalid(player)
 
     def perform(self, player):
+        self.link.follow(player)
         self.tm.players[player].room = self.toRoom
 
 class MovePath(CompoundAction):

@@ -29,10 +29,29 @@ rooms:
           cost: 3
         - room: RoomNW
           cost: 2
+          prerequisites:
+            - type: state
+              state: open
+              device: Blast Doors
       items:
         - Hammer
         - Tablet
-
+      devices:
+        - name: Blast Doors
+          state: closed
+          functions:
+            - name: Open blast doors
+              cost: 3
+              newState: open
+              prerequisites:
+                - type: state
+                  state: closed
+            - name: Close blast doors
+              cost: 3
+              newState: closed
+              prerequisites:
+                - type: state
+                  state: open
     - name: RoomNW
       position: [20,23]
       centre: [29,34]
@@ -49,6 +68,11 @@ rooms:
       links:
         - room: sBubbleNW
           cost: 2
+          prerequisites:
+            - type: state
+              state: open
+              room: sBubbleNW
+              device: Blast Doors
 
     - name: lBubble
       position: [0,38]
@@ -86,6 +110,26 @@ rooms:
         - name: Read company webpage
           type: read
           cost: 1
+      devices:
+        - name: Charging Station
+          state: empty
+          functions:
+            - name: Plug in tablet
+              cost: 1
+              newState: tablet
+              prerequisites:
+                - type: state
+                  state: empty
+                - type: item
+                  item: Tablet
+                  consumes: True
+            - name: Unplug tablet
+              cost: 1
+              item: Tablet
+              newState: empty
+              prerequisites:
+                - type: state
+                  state: tablet
       links:
         - room: lBubble
           cost: 3
@@ -165,12 +209,39 @@ rooms:
         - name: Wow are these mirrors on the other side?
           type: inspect
           cost: 1
-        - name: Look through north mirror
-          type: inspect
-          cost: 1
-        - name: Look through south mirror
-          type: inspect
-          cost: 1
+      devices:
+        - name: North Mirror
+          state: intact
+          functions:
+            - name: Look through north mirror
+              cost: 1
+              prerequisites:
+                - type: state
+                  state: intact
+            - name: Smash north mirror
+              cost: 1
+              newState: broken
+              prerequisites:
+                - type: state
+                  state: intact
+                - type: item
+                  item: Hammer
+        - name: South Mirror
+          state: intact
+          functions:
+            - name: Look through south mirror
+              cost: 1
+              prerequisites:
+                - type: state
+                  state: intact
+            - name: Smash south mirror
+              cost: 1
+              newState: broken
+              prerequisites:
+                - type: state
+                  state: intact
+                - type: item
+                  item: Hammer
       links:
         - room: CorridorCW
           cost: 2

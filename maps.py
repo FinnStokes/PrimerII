@@ -5,6 +5,7 @@ import pygame
 import yaml
 
 import actions
+import devices
 import layers
 import menus
 import resources
@@ -63,30 +64,22 @@ class Room(widgets.WorldWidget):
         self.set_image(self.base_image)
         self.set_rect(rect)
         self.mask = pygame.mask.from_surface(self.image)
-        self.actions = []
-        if 'items' in data:
-            self.initial_items = data['items']
-        else:
-            self.initial_items = []
+        self.initial_items = data.get('items', [])
         self.items = list(self.initial_items)
         self.width = self.base_image.get_width()
         self.height = self.base_image.get_height()
         self.tm = tm
         self.map = m
         self.rift = None
+        self.actions = [construct_action(action) for action in data.get('actions', [])]
+        self.links = [Link(link, self.name, tm) for link in data.get('links', [])]
+        self.devices = [devices.Device(dev, self, tm) for dev in data.get('devices', [])]
         if 'rift' in data:
             self.rift = actions.TimeTravel(data['rift']['name'], 1, data['rift']['time'], data['rift']['timeline'], tm)
             self.showing_rift = False
             self.rift_base_image, _ = resources.load_png(os.path.join(directory, "rift"+str(data['rift']['timeline'])+"."+data['inactive']))
             self.rift_active_image, _ = resources.load_png(os.path.join(directory, "rift"+str(data['rift']['timeline'])+"."+data['active']))
             self.actions.append(self.rift)
-        if 'actions' in data:
-            for action in data['actions']:
-                self.actions.append(construct_action(action))
-        self.links = []
-        if 'links' in data:
-            for link in data['links']:
-                self.links.append(Link(link, self.name))
         self.menu = menu
 
     def over(self):
@@ -104,9 +97,12 @@ class Room(widgets.WorldWidget):
         if button == 1:
             room = self.tm.active_avatar().room
             if room == self:
-                self.menu.show(pos, self.actions +
-                               [actions.Take("Take "+item, 1, item, self.tm) for item in self.items] +
-                               [actions.Drop("Drop "+item, 1, item, self.tm) for item in self.tm.active_inventory().items])
+                a = list(self.actions)
+                for device in self.devices:
+                    a += device.functions
+                a += ([actions.Take("Take "+item, 1, item, self.tm) for item in self.items] +
+                      [actions.Drop("Drop "+item, 1, item, self.tm) for item in self.tm.active_inventory().items])
+                self.menu.show(pos, a)
             else:
                 path = self.map.get_path(room, self, self.tm.active_player)
                 if path:
@@ -139,15 +135,22 @@ class Room(widgets.WorldWidget):
 
     def reset(self):
         self.items = list(self.initial_items)
+        for device in self.devices:
+            device.reset()
         
 class Link:
-    def __init__(self, data, room):
+    def __init__(self, data, room, tm):
         self.start = room
         self.room = data['room']
         self.cost = data['cost']
+        self.prerequisites = [devices.construct_prerequisite(p, tm, room=room) for p in data.get('prerequisites', [])]
 
     def isvalid(self, player):
-        return True
+        return all([p.met(player) for p in self.prerequisites])
+
+    def follow(self, player):
+        for p in self.prerequisites:
+            p.enact(player)
 
 def construct_action(data):
     return actions.Action(data['name'], data['cost'])
