@@ -42,13 +42,15 @@ rooms:
           functions:
             - name: Open blast doors
               cost: 3
-              newState: open
+              effects:
+                - state: open
               prerequisites:
                 - type: state
                   state: closed
             - name: Close blast doors
               cost: 3
-              newState: closed
+              effects:
+                - state: closed
               prerequisites:
                 - type: state
                   state: open
@@ -73,6 +75,31 @@ rooms:
               state: open
               room: sBubbleNW
               device: Blast Doors
+      devices:
+        - name: Blast Door Control
+          functions:
+            - name: Open blast doors
+              cost: 3
+              effects:
+                - room: sBubbleNW
+                  device: Blast Doors
+                  state: open
+              prerequisites:
+                - type: state
+                  room: sBubbleNW
+                  device: Blast Doors
+                  state: closed
+            - name: Close blast doors
+              cost: 3
+              effects:
+                - room: sBubbleNW
+                  device: Blast Doors
+                  state: closed
+              prerequisites:
+                - type: state
+                  room: sBubbleNW
+                  device: Blast Doors
+                  state: open
 
     - name: lBubble
       position: [0,38]
@@ -116,7 +143,8 @@ rooms:
           functions:
             - name: Plug in tablet
               cost: 1
-              newState: tablet
+              effects:
+                - state: tablet
               prerequisites:
                 - type: state
                   state: empty
@@ -125,8 +153,9 @@ rooms:
                   consumes: True
             - name: Unplug tablet
               cost: 1
-              item: Tablet
-              newState: empty
+              effects:
+                - state: empty
+                  item: Tablet
               prerequisites:
                 - type: state
                   state: tablet
@@ -220,7 +249,8 @@ rooms:
                   state: intact
             - name: Smash north mirror
               cost: 1
-              newState: broken
+              effects:
+                - state: broken
               prerequisites:
                 - type: state
                   state: intact
@@ -236,7 +266,8 @@ rooms:
                   state: intact
             - name: Smash south mirror
               cost: 1
-              newState: broken
+              effects:
+                - state: broken
               prerequisites:
                 - type: state
                   state: intact

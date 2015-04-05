@@ -4,7 +4,7 @@ class Device:
     def __init__(self, data, room, tm):
         self.name = data['name']
         self.room = room
-        self.initial_state = data['state']
+        self.initial_state = data.get('state')
         self.state = self.initial_state
         self.functions = [Activate(func, self, tm) for func in data.get('functions', [])]
 
@@ -14,22 +14,36 @@ class Device:
 class Activate(actions.Action):
     def __init__(self, data, device, tm):
         actions.Action.__init__(self, data['name'], data['cost'])
-        self.device = device
+        self.effects = [Effect(r, device, tm) for r in data.get('effects', [])]
         self.prerequisites = [construct_prerequisite(p, tm, room=device.room.name, device=device.name) for p in data.get('prerequisites', [])]
+        self.device = device
         self.tm = tm
-        self.newState = data.get('newState')
-        self.item = data.get('item')
 
     def isvalid(self, player):
         return self.tm.players[player].room == self.device.room and all([p.met(player) for p in self.prerequisites])
 
     def perform(self, player):
-        if self.newState:
-            self.device.state = self.newState
-        if self.item:
-            self.device.room.items.append(self.item)
+        for e in self.effects:
+            e.perform(player)
         for p in self.prerequisites:
             p.enact(player)
+
+class Effect:
+    def __init__(self, data, device, tm):
+        self.room = data.get('room', device.room.name)
+        self.device = data.get('device', device.name)
+        self.newState = data.get('state')
+        self.item = data.get('item')
+        self.tm = tm
+
+    def perform(self, player):
+        room = self.tm.map.room_map[self.room]
+        if self.newState:
+            for device in room.devices:
+                if device.name == self.device:
+                    device.state = self.newState
+        if self.item:
+            room.items.append(self.item)
 
 class Prerequisite:
     def met(self, player):
